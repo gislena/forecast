@@ -1,0 +1,67 @@
+body {
+    background-color: #d7d7d7;
+    color: black;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: baseline;
+
+    
+}
+
+.day-card {
+    flex: 1; /* Distribución equitativa */
+    border: 1px solid bisque;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+
+.day-card img {
+    width: 50px;
+    height: auto;
+    margin: 10px 0;
+}
+
+button{
+    background-color: bisque;
+    border-width: 1px;
+    border-radius: 1px;
+}
+
+
+#controls {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column; /* Opcional: para apilar select y botón */
+    align-items: center; /* Alinea a la izquierda */
+    gap: 10px; /* Espacio interno entre select y botón */
+}
+
+
+h1{
+    font-family: ;
+}
+
+
+
+.orbitron-googleFont {
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+#map {
+    height: 400px !important; /* El !important asegura que se aplique */
+    width: 100%;
+    display: block;
+    background-color: #eee; /* Si ves gris, el div existe pero falta el mapa */
+}
