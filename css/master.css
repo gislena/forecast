@@ -1,170 +1,100 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
     background-color: #d7d7d7;
-    color: #1a1a1a;
-    font-family: 'Orbitron', sans-serif; /* Prioriza la fuente que elegiste */
-    line-height: 1.6;
+    color: black;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0;
     padding: 20px;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-/* Mapa */
 #map {
     height: 400px;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 30px;
     border-radius: 15px;
-    border: 3px solid #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: block;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    position: relative; /* Evita conflictos de capas con Leaflet */
     z-index: 1;
 }
 
-/* Texto de Ubicación */
-#location-info {
+#city-display {
     text-align: center;
+    font-size: 1.8rem;
     margin-bottom: 30px;
-    background: rgba(255, 255, 255, 0.5);
-    padding: 10px;
-    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-/* Contenedor Principal Flexbox */
 .days {
-    display: flex;
-    flex-wrap: wrap; /* Permite que las tarjetas bajen si no hay espacio */
-    gap: 15px;      /* Espacio entre tarjetas */
-    justify-content: center; /* Centra las tarjetas en el espacio disponible */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+    justify-items: center;
     max-width: 1400px;
     margin: 0 auto;
 }
 
-/* Tarjeta Horaria (cada 3 horas) */
 .hour-card {
     background: #ffffff;
-    border-top: 5px solid #0058ff;
-    border-radius: 10px;
-    padding: 15px;
+    border-top: 8px solid #0058ff;
+    border-radius: 15px;
+    padding: 25px;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-    
-    /* Base para el ajuste automático */
-    flex: 1 1 150px; /* Crece, se achica y su base ideal es 150px */
-    max-width: 200px; /* Evita que se estiren demasiado en pantallas grandes */
-}
-
-.hour-card:hover {
-    transform: translateY(-5px);
-}
-
-.hour-card h3 {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.hour-card img {
-    width: 60px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.temp {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #0058ff;
-    margin-bottom: 10px;
-}
-
-.details {
-    font-family: Arial, sans-serif; /* Fuente legible para datos chicos */
-    font-size: 0.75rem;
-    color: #666;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
-
-.details span {
-    display: block; /* Un dato debajo del otro */
-    margin-bottom: 2px;
-}
-
-/* Media Queries para Responsividad */
-
-/* Tablets */
-@media (max-width: 992px) {
-    .hour-card {
-        flex: 1 1 130px; /* Tarjetas un poco más chicas */
-    }
-}
-
-/* Móviles */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    #map {
-        height: 250px;
-    }
-
-    .hour-card {
-        flex: 1 1 calc(45% - 15px); /* 2 tarjetas por fila */
-        min-width: 140px;
-    }
-    
-    h1 {
-        font-size: 1.2rem;
-    }
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    font-size: 0.8rem;
-    color: #777;
-}
-
-
-
-.time-tag {
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    min-height: 320px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.time-tag {
     background: #0058ff;
-    color: white;
-    border-radius: 5px;
-    padding: 5px;
-    margin-bottom: 10px;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .time-tag .day {
-    font-size: 0.8rem;
+    display: block;
+    font-size: 1rem;
+    font-weight: bold;
     text-transform: capitalize;
 }
 
-.time-tag .hour {
-    font-size: 1rem;
-    font-weight: bold;
+.icon-container {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
 }
 
-/* Asegurar que las imágenes se vean */
-.hour-card img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    margin: 5px auto;
+.weather-icon {
+    width: 90px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.temp {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #0058ff;
+    margin: 15px 0;
+}
+
+.details {
+    font-size: 0.9rem;
+    color: #333;
+    border-top: 2px solid #f0f0f0;
+    padding-top: 15px;
+    line-height: 1.6;
+}
+
+.details span {
+    display: block;
 }
