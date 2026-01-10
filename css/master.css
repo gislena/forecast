@@ -138,3 +138,33 @@ footer {
     font-size: 0.8rem;
     color: #777;
 }
+
+
+
+.time-tag {
+    display: flex;
+    flex-direction: column;
+    background: #0058ff;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.time-tag .day {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+.time-tag .hour {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Asegurar que las imágenes se vean */
+.hour-card img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin: 5px auto;
+}
