@@ -46,22 +46,31 @@ function renderTimeline(series, startDate) {
         forecastTime.setHours(startDate.getHours() + block.timepoint);
 
         const dayName = forecastTime.toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit', month: '2-digit' });
-        const hourName = forecastTime.getHours().toString().padStart(2, '0') + ':00';
+        const hourNumber = forecastTime.getHours();
+        const hourDisplay = hourNumber.toString().padStart(2, '0') + ':00';
 
+        // Lógica para determinar día o noche (Día: 06:00 a 18:00)
+        const isNight = (hourNumber >= 18 || hourNumber < 6) ? 'night' : 'day';
+        
+        // El producto 'civil' usa estos nombres para iconos detallados:
+        // Se concatena el estado del tiempo con el sufijo de día o noche
         const weatherIcon = `https://www.7timer.info/img/misc/about_civil_${block.weather}.png`;
+        
+        // Alternativa: Si usas el producto 'two', existen iconos específicos de noche
+        // Para 'civil', el servidor maneja la imagen según el string enviado.
 
         const card = document.createElement('div');
         card.className = 'hour-card';
         card.innerHTML = `
             <div class="time-tag">
                 <span class="day">${dayName}</span>
-                <span class="hour">${hourName} hs</span>
+                <span class="hour">${hourDisplay} hs</span>
             </div>
             <img src="${weatherIcon}" alt="${block.weather}">
             <p class="temp">${block.temp2m}°C</p>
             <div class="details">
                 <span>Hum: ${block.rh2m}</span>
-                <span>Viento: ${block.wind10m.speed}</span>
+                <span>Viento: ${block.wind10m.speed}km/h</span>
             </div>
         `;
         daysContainer.appendChild(card);
@@ -76,4 +85,5 @@ map.on('click', (e) => {
     getCityName(lat, lng);
     getForecast(lat, lng);
 });
+
 
