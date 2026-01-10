@@ -19,31 +19,39 @@ async function getCityName(lat, lon) {
     }
 }
 
-function renderDays(series) {
+function renderTimeline(series) {
     daysContainer.innerHTML = '';
-    series.forEach(day => {
-        const dateStr = day.date.toString();
-        const displayDate = `${dateStr.substring(6, 8)}/${dateStr.substring(4, 6)}/${dateStr.substring(0, 4)}`;
-        
+    
+    // El punto de inicio es la hora 'init' de la API
+    series.forEach((block) => {
         const card = document.createElement('div');
-        card.className = 'day-card';
+        card.className = 'hour-card';
+        
+        // timepoint representa las horas transcurridas desde el inicio
+        const hoursAhead = block.timepoint;
+        
         card.innerHTML = `
-            <h3>${displayDate}</h3>
-            <img src="https://www.7timer.info/img/misc/about_civil_${day.weather}.png">
-            <p><strong>Máx: ${day.temp2m.max}°C</strong></p>
-            <p>Min: ${day.temp2m.min}°C</p>
+            <div class="time-tag">+${hoursAhead}h</div>
+            <img src="https://www.7timer.info/img/misc/about_civil_${block.weather}.png">
+            <p class="temp">${block.temp2m}°C</p>
+            <div class="details">
+                <span>Humedad: ${block.rh2m}</span>
+                <span>Viento: ${block.wind10m.speed}</span>
+            </div>
         `;
         daysContainer.appendChild(card);
     });
 }
 
 async function getForecast(lat, lon) {
-    const url = `https://www.7timer.info/bin/api.pl?lon=${lon.toFixed(2)}&lat=${lat.toFixed(2)}&product=civillight&output=json`;
+    const url = `https://www.7timer.info/bin/api.pl?lon=${lon.toFixed(2)}&lat=${lat.toFixed(2)}&product=civil&output=json`;
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        renderDays(data.dataseries);
+        
+        // Enviamos la serie completa (sin filtrar por día)
+        renderTimeline(data.dataseries);
     } catch (error) {
         console.error("Error:", error);
     }
@@ -64,3 +72,4 @@ map.on('click', (e) => {
 
 
 setTimeout(() => map.invalidateSize(), 100);
+
