@@ -1,15 +1,12 @@
-// 1. Configuración inicial del mapa
 const map = L.map('map').setView([-34.60, -58.38], 4);
 const daysContainer = document.querySelector('.days');
 const cityDisplay = document.querySelector('#city-display');
 let marker;
 
-// Capa de mapa de OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// 2. Función para convertir coordenadas en nombre de ciudad/estado
 async function getCityName(lat, lon) {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
@@ -17,11 +14,10 @@ async function getCityName(lat, lon) {
         const city = data.address.city || data.address.town || data.address.village || data.address.state || "Ubicación seleccionada";
         cityDisplay.innerText = `Clima para: ${city}`;
     } catch (error) {
-        cityDisplay.innerText = `Clima para: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+        cityDisplay.innerText = `Ubicación: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
     }
 }
 
-// 3. Función para obtener datos climáticos (cada 3 horas)
 async function getForecast(lat, lon) {
     const url = `https://www.7timer.info/bin/api.pl?lon=${lon.toFixed(2)}&lat=${lat.toFixed(2)}&product=civil&output=json`;
 
@@ -29,39 +25,44 @@ async function getForecast(lat, lon) {
         const response = await fetch(url);
         const data = await response.json();
         
-        // Procesar la fecha de inicio 'init' de la API (AAAAMMDDHH)
+        // PARSEO CRÍTICO DE FECHA: Convierte "2023102712" en un objeto Date real
         const year = data.init.substring(0, 4);
-        const month = data.init.substring(4, 6) - 1; // Enero es 0
+        const month = parseInt(data.init.substring(4, 6)) - 1;
         const day = data.init.substring(6, 8);
         const hour = data.init.substring(8, 10);
         const startDate = new Date(year, month, day, hour);
 
         renderTimeline(data.dataseries, startDate);
     } catch (error) {
-        console.error("Error al obtener el clima:", error);
+        console.error("Error:", error);
     }
 }
 
-// 4. Función para crear las tarjetas en el HTML
 function renderTimeline(series, startDate) {
     daysContainer.innerHTML = '';
     
     series.forEach((block) => {
-        // Calcular tiempo real sumando 'timepoint' (horas) a la fecha de inicio
+        // Calcula la fecha exacta sumando el timepoint (horas)
         const forecastTime = new Date(startDate);
         forecastTime.setHours(startDate.getHours() + block.timepoint);
 
+        // Formato: "lun 27" y "15:00"
         const dayName = forecastTime.toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit' });
-        const hourName = forecastTime.toLocaleDateString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        const hourName = forecastTime.getHours().toString().padStart(2, '0') + ':00';
 
         const card = document.createElement('div');
         card.className = 'hour-card';
+        
+        // CORRECCIÓN DE ICONOS: Se usa el valor de 'weather' directamente
+        // Ejemplo de URL final: https://www.7timer.info/img/misc/about_civil_clear.png
+        const weatherIcon = `https://www.7timer.info/img/misc/about_civil_${block.weather}.png`;
+
         card.innerHTML = `
             <div class="time-tag">
                 <span class="day">${dayName}</span>
                 <span class="hour">${hourName} hs</span>
             </div>
-            <img src="https://www.7timer.info/img/misc/about_civil_${block.weather}.png" alt="${block.weather}">
+            <img src="${weatherIcon}" onerror="this.src='https://www.7timer.info/img/misc/about_civil_clear.png'" alt="${block.weather}">
             <p class="temp">${block.temp2m}°C</p>
             <div class="details">
                 <span>Hum: ${block.rh2m}</span>
@@ -72,20 +73,11 @@ function renderTimeline(series, startDate) {
     });
 }
 
-// 5. Evento de clic en el mapa
 map.on('click', (e) => {
     const { lat, lng } = e.latlng;
-
-    if (marker) {
-        marker.setLatLng(e.latlng);
-    } else {
-        marker = L.marker(e.latlng).addTo(map);
-    }
+    if (marker) marker.setLatLng(e.latlng);
+    else marker = L.marker(e.latlng).addTo(map);
 
     getCityName(lat, lng);
     getForecast(lat, lng);
 });
-
-setTimeout(() => {
-    map.invalidateSize();
-}, 100);
