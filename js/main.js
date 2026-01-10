@@ -13,9 +13,9 @@ async function getCityName(lat, lon) {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
         const data = await response.json();
         const city = data.address.city || data.address.town || data.address.village || data.address.state || "Ubicación desconocida";
-        cityDisplay.innerText = `Clima para: ${city}`;
+        cityDisplay.innerText = `Clima en: ${city}`;
     } catch (error) {
-        cityDisplay.innerText = `Clima para: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+        cityDisplay.innerText = `Clima en: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
     }
 }
 
@@ -61,5 +61,6 @@ map.on('click', (e) => {
     getCityName(lat, lng);
     getForecast(lat, lng);
 });
+
 
 setTimeout(() => map.invalidateSize(), 100);
