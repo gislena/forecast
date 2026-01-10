@@ -25,9 +25,9 @@ async function getForecast(lat, lon) {
         const response = await fetch(url);
         const data = await response.json();
         
-        // PARSEO CRÍTICO DE FECHA: Convierte "2023102712" en un objeto Date real
+        // 1. PROCESAR FECHA DE INICIO (init: "2026010918")
         const year = data.init.substring(0, 4);
-        const month = parseInt(data.init.substring(4, 6)) - 1;
+        const month = parseInt(data.init.substring(4, 6)) - 1; // Meses 0-11
         const day = data.init.substring(6, 8);
         const hour = data.init.substring(8, 10);
         const startDate = new Date(year, month, day, hour);
@@ -42,31 +42,26 @@ function renderTimeline(series, startDate) {
     daysContainer.innerHTML = '';
     
     series.forEach((block) => {
-        // Calcula la fecha exacta sumando el timepoint (horas)
         const forecastTime = new Date(startDate);
         forecastTime.setHours(startDate.getHours() + block.timepoint);
 
-        // Formato: "lun 27" y "15:00"
-        const dayName = forecastTime.toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit' });
+        const dayName = forecastTime.toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit', month: '2-digit' });
         const hourName = forecastTime.getHours().toString().padStart(2, '0') + ':00';
+
+        const weatherIcon = `https://www.7timer.info/img/misc/about_civil_${block.weather}.png`;
 
         const card = document.createElement('div');
         card.className = 'hour-card';
-        
-        // CORRECCIÓN DE ICONOS: Se usa el valor de 'weather' directamente
-        // Ejemplo de URL final: https://www.7timer.info/img/misc/about_civil_clear.png
-        const weatherIcon = `https://www.7timer.info/img/misc/about_civil_${block.weather}.png`;
-
         card.innerHTML = `
             <div class="time-tag">
                 <span class="day">${dayName}</span>
                 <span class="hour">${hourName} hs</span>
             </div>
-            <img src="${weatherIcon}" onerror="this.src='https://www.7timer.info/img/misc/about_civil_clear.png'" alt="${block.weather}">
+            <img src="${weatherIcon}" alt="${block.weather}">
             <p class="temp">${block.temp2m}°C</p>
             <div class="details">
                 <span>Hum: ${block.rh2m}</span>
-                <span>Viento: ${block.wind10m.speed}km/h</span>
+                <span>Viento: ${block.wind10m.speed}</span>
             </div>
         `;
         daysContainer.appendChild(card);
@@ -81,3 +76,4 @@ map.on('click', (e) => {
     getCityName(lat, lng);
     getForecast(lat, lng);
 });
+
